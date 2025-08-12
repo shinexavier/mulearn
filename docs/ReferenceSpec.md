@@ -555,11 +555,11 @@ This section maps μLearn components and flows onto Beckn terminology so integra
 
 ### A.3 Sequence — Task discovery & approval (Beckn-style)
 
-![BECKN_A3_SEQ](BECKN_A3_SEQ.png) 
+![BECKN_A3_SEQ](images/BECKN_A3_SEQ.png) 
 
 ### A.4 Sequence — Event redemption (Karma)
 
-![BECKN_A4_SEQ](BECKN_A4_SEQ.png) 
+![BECKN_A4_SEQ](images/BECKN_A4_SEQ.png) 
 
 ---
 
@@ -678,7 +678,7 @@ This annex replaces “broadcast to wallets” with a **pull + prefilter** desig
 
 ### D.4 Issuance flow (sequence)
 
-![Issuance_D4_SEQ](Issuance_D4_SEQ.png) 
+![Issuance_D4_SEQ](images/Issuance_D4_SEQ.png) 
 
 ### D.5 Policy on-chain (PDP/PEP)
 
