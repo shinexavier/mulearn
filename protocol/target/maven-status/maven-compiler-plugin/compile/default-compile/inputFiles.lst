@@ -1,0 +1,12 @@
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/domain/Message.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/domain/did/DidDocument.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/config/AppConfig.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/service/resolver/AcapyDidResolver.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/exception/DidResolutionException.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/domain/did/DidMethod.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/service/MessageService.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/controller/MessageController.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/service/DIDResolverService.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/exception/UnsupportedDidMethodException.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/ProtocolApplication.java
+/Users/xaviesh/Projects/μLearn/Framework/protocol/src/main/java/org/mulearn/protocol/domain/did/VerificationMethod.java

@@ -1,0 +1,4 @@
+acapy-did-indy:
+  indy_namespace: "bcovrin:test"
+  ledgers:
+    "bcovrin:test": "http://test.bcovrin.vonx.io/genesis"

@@ -1,0 +1,56 @@
+networks:
+  ssi-net:
+    name: ssi-net
+    external: true
+
+services:
+  acapy:
+    build: .
+    image: acapy-with-didindy:1.2.0
+    container_name: acapy
+    restart: unless-stopped
+    networks: [ ssi-net ]
+    ports:
+      - "8020:8020"   # inbound http
+      - "8031:8031"   # admin api
+    environment:
+      ACAPY_LOG_LEVEL: info
+    command:
+      - start
+      - --label
+      - mulearn-issuer
+      - --admin
+      - 0.0.0.0
+      - "8031"
+      - --admin-api-key
+      - secret
+      - -it
+      - http
+      - 0.0.0.0
+      - "8020"
+      - -ot
+      - http
+      - --endpoint
+      - http://acapy:8020
+      - --wallet-type
+      - askar
+      - --wallet-name
+      - mulearn
+      - --wallet-key
+      - mulearnkey
+      - --auto-provision
+      - --public-invites
+      - --plugin
+      - acapy_did_indy
+      - --plugin-config-value
+      - "acapy_did_indy.indy_namespace=bcovrin:test"
+      - --plugin-config-value
+      - "acapy_did_indy.ledgers.bcovrin:test=http://test.bcovrin.vonx.io/genesis"
+      - --genesis-url
+      - http://test.bcovrin.vonx.io/genesis
+      - --emit-new-didcomm-prefix
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -H 'X-API-Key: secret' http://localhost:8031/status >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
