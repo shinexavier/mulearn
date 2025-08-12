@@ -1,4 +1,3 @@
-
 ### Abstract / Executive Summary
 
 μLearn is a vibrant, peer‑learning community that currently lives on Discord. This blueprint proposes an open protocol and reference architecture that elevates μLearn into a **decentralised, trust‑minimised ecosystem**. Core design levers are W3C DIDs, verifiable credentials, Hyperledger Fabric chain‑code, a fungible **KarmaToken**, and privacy‑preserving zero‑knowledge proofs (ZKPs). The document lays out actors, use cases, protocol SDKs, domain model, stack recommendations, and an incremental migration roadmap.
@@ -11,6 +10,9 @@ Key design levers:
 * **Zero-Knowledge Proofs (ZKPs)** to prove “≥ x karma”, group membership, or eligibility for paid events **without revealing raw scores**
 * **Client / provider SDKs + middleware “protocol server”** so existing web, mobile or Discord clients can integrate with minimal re-work, mirroring an adaptor pattern
 
+---
+
+<div class="page-break-before"></div>
 
 ## 1  Acronyms & Terms (Glossary)
 
@@ -57,6 +59,9 @@ Key design levers:
 | **PDP**                    | Policy Decision Point                                                                                                          |
 | **PEP**                    | Policy Enforcement Point                                                                                                       |
 
+---
+
+<div class="page-break-before"></div>
 
 ## 2 System overview
 
@@ -64,7 +69,7 @@ Key design levers:
 
 ### Context diagram (C4 Level1)
 
-![μLearn-C4-v3](images/μLearn-C4-v3.png)
+![μLearn-C4-v3](μLearn-C4-v3.png)
 
 The *Protocol Server* enforces the open message envelope, validates signatures, writes state to Fabric, and bridges legacy channels such as Discord.
 
@@ -103,6 +108,7 @@ The *Protocol Server* enforces the open message envelope, validates signatures, 
 
 In most Aries deployments these artefacts live on a **purpose-built Indy (VDR) network** or as state in Hyperledger Fabric chain-code, but the term “VC Registry” is used generically to cover whichever storage layer the project chooses.
 
+---
 
 ### Why μLearn needs a VC Registry
 
@@ -124,16 +130,18 @@ In most Aries deployments these artefacts live on a **purpose-built Indy (VDR) n
 4. **Portability outside μLearn**
    Because μLearn publishes schemas/definitions in a universally accessible registry, a participating university can verify badges **even if it never connects to μLearn middleware**, as long as it can reach the registry or a cached copy.
 
+---
 
 ### Sequence example: *Student applies for an internship*
 
-![Aries-VC-SEQ3](images/Aries-VC-SEQ3.png)
+![Aries-VC-SEQ3](Aries-VC-SEQ3.png)
 
 **Key points**
 
 * The registry is *read-heavy* for wallets and verifier nodes, *write-light* for issuing mentors or governance chain-code.
 * It is authoritative for revocation and public verification keys; removing it would force μLearn to bake the same data directly into every credential—making upgrades and revocations nearly impossible.
 
+---
 
 ### Relationship to Hyperledger Fabric in the diagram
 
@@ -142,11 +150,13 @@ In most Aries deployments these artefacts live on a **purpose-built Indy (VDR) n
 
 They are separate subsystems but together form the **Trust Infrastructure** layer.  Fabric tells us *“who owns what and which task was approved”*; the VC Registry lets anyone verify *“who you are and whether your credential is still valid”*—all without leaking private data.
 
+---
 
 #### μLearn Middleware (Protocol)
 
 *Definition* — A Spring Boot 3 micro‑service that implements the open μLearn Protocol. It validates every inbound message (DIDComm, gRPC, REST), enforces chain‑code via Hyperledger Fabric Gateway, maintains an append‑only domain‑event store, and bridges legacy channels such as Discord.
 
+---
 
 **Why μLearn needs Middleware**
 
@@ -155,16 +165,21 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 3. **Legacy Bridge** – Allows Discord bots and existing web dashboards to remain unchanged while the back‑end moves to decentralised trust.
 4. **Observability Hub** – Single point for Prometheus metrics and audit logs required by governance consortium.
 
+---
 
 **Sequence example – Student submits a task**
 
-![Middleware-SEQ1](images/Middleware-SEQ1.png)
+![Middleware-SEQ1](Middleware-SEQ1.png)
 
+---
 
 #### μLearn Smart Wallet (Consumer Node)
 
 *Definition* — A cross‑platform wallet (React‑Native mobile + browser extension) that acts as the *consumer‑side SDK*. It stores DID keys (Ed25519), AnonCreds & BBS+ credentials, and **KarmaToken** UTXOs. It also packs/unpacks DIDComm v2 envelopes and exposes gRPC stubs like `submitTask()`, `redeemToken()`, `proveBadge()`.
 
+---
+
+<div class="page-break-before"></div>
 
 **Why μLearn needs the Smart Wallet**
 
@@ -173,16 +188,19 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 3. **Token Store & Signing Device** – Holds UTXOs and signs Fabric transactions via Gateway API.
 4. **Omnichannel UX** – Same wallet works in mobile app, PWA, or as browser plug‑in for third‑party learning portals.
 
+---
 
 **Sequence example – Student redeems tokens for event entry**
 
-![SmartWallet-SEQ1](images/SmartWallet-SEQ1.png)
+![SmartWallet-SEQ1](SmartWallet-SEQ1.png)
 
+---
 
 #### μLearn Provider Node
 
 *Definition* — A JVM‑based SDK (Spring Boot starter) deployed inside a University or Company back‑end. It subscribes to protocol events, publishes tasks/opportunities, and verifies credentials or ZK proofs from students.
 
+---
 
 **Why μLearn needs Provider Nodes**
 
@@ -190,16 +208,19 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 2. **Verifiable Hiring / Credit Workflow** – Nodes verify skills via ZK proofs before issuing offers or course credits.
 3. **Decentralised Governance** – Providers can run Fabric peers & join endorsement policies for true multi‑party control.
 
+---
 
 **Sequence example – Company publishes internship & accepts applicant**
 
-![ProviderNode-SEQ1](images/ProviderNode-SEQ1.png)
+![ProviderNode-SEQ1](ProviderNode-SEQ1.png)
 
+---
 
 #### Hyperledger Fabric
 
 *Definition* — A permissioned blockchain framework (v3) with MSP‑based identity, Raft ordering, and the Token SDK. μLearn deploys three chain‑code modules: `TaskChaincode`, `KarmaToken`, and `Governance`.
 
+---
 
 **Why μLearn needs Fabric**
 
@@ -208,16 +229,20 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 3. **Token SDK** – Enables ERC‑20‑like KarmaToken with on‑chain balance checks that smart contracts can query.
 4. **Pluggable Privacy** – Supports Fabric‑Private‑Chaincode for confidential ZK proof verification if needed.
 
+---
+<div class="page-break-before"></div>
 
 **Sequence example – KarmaToken mint**
 
-![Fabric-SEQ1](images/Fabric-SEQ1.png)
+![Fabric-SEQ1](Fabric-SEQ1.png)
 
+---
 
 #### Discord Integration
 
 *Definition* — A set of Discord bots plus web‑hooks that mirror on‑chain events into the community’s primary chat platform and capture quick‑reaction inputs back to Middleware.
 
+---
 
 **Why μLearn keeps Discord**
 
@@ -225,11 +250,14 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 2. **Community Engagement** – Real‑time leaderboards, streaks, and shout‑outs keep momentum high.
 3. **Backwards Compatibility** – Existing task‑submission bot commands can call the Middleware API under the hood.
 
+---
 
 **Sequence example – Bot announces task approval**
 
-![Discord-BOT-SEQ1](images/Discord-BOT-SEQ1.png)
+![Discord-BOT-SEQ1](Discord-BOT-SEQ1.png)
 
+---
+<div class="page-break-before"></div>
 
 ## 3 Actors, roles & entitlements
 
@@ -244,6 +272,9 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 | **Aries VC Registry**                  | —                       | Store & resolve credential schemas                   |
 
 
+---
+
+<div class="page-break-before"></div>
 
 ## 4 Decentralized Identifiers (DID) in the μLearn Architecture
 
@@ -258,6 +289,7 @@ A **Decentralized Identifier (DID)** is a globally unique identifier controlled 
 * **Privacy by design:** Use **pairwise/rotating DIDs** to prevent cross‑provider correlation.
 * **Composable authorization:** Combine *who you are* (DID Auth) + *what you can prove* (VCs/ZKPs) + *on‑chain state* (Karma balance) under policy.
 
+---
 
 ### Recommended DID methods by role
 
@@ -271,6 +303,7 @@ A **Decentralized Identifier (DID)** is a globally unique identifier controlled 
 
 > A future `did:mulearn` method can be added if governance requires a dedicated method; start with the broadly supported ones above. if governance requires a dedicated method; start with the broadly supported ones above.
 
+---
 
 ### Creation, publication, rotation
 
@@ -295,6 +328,7 @@ A **Decentralized Identifier (DID)** is a globally unique identifier controlled 
 * For `did:web`, push updated did.json; for `did:indy`, write a new NYM/ATTRIB as per network rules.
 * Wallets store a recovery seed; optional encrypted backups; institutions may use HSMs for custodial roles.
 
+---
 
 ### How DIDs are used in μLearn
 
@@ -303,14 +337,14 @@ A **Decentralized Identifier (DID)** is a globally unique identifier controlled 
 * Wallets (students/mentors) sign DIDComm/gRPC payloads with their DID keys.
 * Middleware resolves the DID Document and verifies signatures, then applies policy (e.g., *mentor can approve task*).
 
-![DID_Auth_SEQ1](images/DID_Auth_SEQ1.png)
+![DID_Auth_SEQ1](DID_Auth_SEQ1.png)
 
 #### 2) Credentials & selective disclosure
 
 * Mentor (Issuer DID) issues a **VC** (e.g., *Completed React Task 42 ≥80%*).
 * Wallet later presents a **ZK proof** (BBS+/AnonCreds) to a Provider Node: *“I hold a Frontend badge”* without exposing identity/score.
 
-![DID_Auth_SEQ12](images/DID_Auth_SEQ2.png)
+![DID_Auth_SEQ12](DID_Auth_SEQ2.png)
 
 #### 3) Binding DIDs to Fabric/MSP identities
 
@@ -319,6 +353,7 @@ Fabric uses X.509 **MSP** certs for tx identities. We link them to DIDs via a **
 * Claim example: `{ fabric_msp_subject: "<cert fingerprint>", did: "<did:web:provider.com>", role: "Provider" }`
 * Chain‑code checks both the MSP subject **and** a verifiable presentation proving control of the corresponding DID/role before minting tokens or approving tasks.
 
+---
 
 ### W3C dependencies & stack alignment
 
@@ -336,6 +371,7 @@ Fabric uses X.509 **MSP** certs for tx identities. We link them to DIDs via a **
 | **VC Registry**   | Aries/Indy VDR                   | Stores schemas, cred defs, revocation, public DIDs        |
 | **Fabric (v3)**   | Task/Karma/Governance chain‑code | Policies reference DIDs via VC binding                    |
 
+---
 
 ### Practical defaults & ops
 
@@ -344,13 +380,322 @@ Fabric uses X.509 **MSP** certs for tx identities. We link them to DIDs via a **
 * Check revocation status on every proof; time‑bound keys/VCs; publish rotation playbooks.
 * Maintain an allowlist of issuer/verifier DIDs for mentors, leaders, and providers; changes approved on‑chain.
 
+---
 
 ### Summing up
 
 DIDs are the **spine of μLearn’s trust fabric**: user‑controlled identifiers created in wallets/nodes, optionally published, and used to sign messages, receive credentials, and generate privacy‑preserving proofs. By aligning with **W3C DID/VC** and Aries/Indy + Fabric, identities and credentials remain **portable, private, and verifiable**—inside and outside μLearn.
 
+---
 
 ###  DID Methods – Reference & Guidance
 
 | DID Method | Anchor / Resolution                                                     | Strengths                                                                        | Trade‑offs                                                         | Recommended μLearn Usage                                                          |
 | ---------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `did:key`  | Self‑certifying from the public key; no external registry.              | Instant, offline, privacy‑friendly; great for ephemeral/pairwise use.            | Not publicly discoverable; rotation requires distributing new DID. | **Students** for quick start and wallet↔middleware calls; short‑lived identities. |
+| `did:peer` | Pairwise DIDs exchanged directly between parties; resolve locally.      | Best privacy; no global trace; easy rotation; perfect for one‑to‑one links.      | Not suitable for public discovery or cross‑party reuse.            | **Student ↔ Provider Node** relationships; rotate per relationship.               |
+| `did:web`  | Hosted at `https://<domain>/.well-known/did.json`; resolved over HTTPS. | Human‑auditable, easy ops; ties DID to DNS and web PKI; great for public actors. | Requires domain control and web hosting; trust rooted in HTTPS.    | **Providers**, **μLearn Middleware**, mentors/leaders with public roles.          |
+| `did:indy` | Written to an Indy VDR (Aries networks); discovery via ledger.             | Native to Aries/AnonCreds; supports revocation registries & schemas.             | Requires participation in an Indy network; governance overhead.    | **Aries VC Registry**, issuers/verifiers in SSI domains that already run Indy.    |
+
+**Notes & patterns**
+
+* Prefer **pairwise first**: use `did:peer` for privacy‑sensitive interactions; fall back to `did:key` for quick sessions.
+* Use **public methods** (`did:web` or `did:indy`) when third parties must **discover** and **verify** you without a prior relationship (e.g., provider recruitment pages, governance issuers).
+* A custom `did:mulearn` method can be introduced later if the consortium wants a dedicated method with specific resolution rules; not needed for phase‑1.
+
+---
+
+<div class="page-break-before"></div>
+
+## 5 Use-case catalogue & UML
+
+![μLearn_UC_1](μLearn_UC_1.png)
+
+**Representative scenarios**
+
+| #     | Scenario                         | Primary flow (happy path)                                                                                                                                 |
+| ----- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UC-01 | *Task submission*                | Learner signs DID Auth → uploads artefact → Protocol Server stores IPFS hash off-chain → invokes `TaskChaincode.submit()` → emits event for Mentor review |
+| UC-02 | *Karma award*                    | Mentor signs approval → chaincode mints `KarmaToken` to learner wallet; wallet emits push‐notification                                                    |
+| UC-03 | *Event access ZKP*               | Wallet generates zk-SNARK showing balance ≥ 1000 tokens without revealing exact amount; verifier smart-contract returns “true” → gate opens               |
+| UC-04 | *Provider posting & fulfil-ment* | Company Node publishes internship → learners apply → ZKP proof of skills verified → provider issues VC offer letter                                       |
+
+---
+
+<div class="page-break-before"></div>
+
+## 6 High-level design & protocol
+
+### 6.1 Decentralised IDs
+
+* Self-sovereign DID documents resolve to μLearn-hosted DID method or popular methods (`did:key`, `did:web`) for maximum wallet compatibility, using W3C DID v1.0 spec.
+
+### 6.2 Smart-contract consensus
+
+* **Hyperledger Fabric** selected for ● permissioned governance ● pluggable consensus ● mature MSP/PKI model.
+* Chaincode (Java) modules: `TaskChaincode`, `KarmaToken`, `Governance`.
+* Endorsement: ≥ N/3 community-lead peers + 1 ProtocolServer peer.
+
+### 6.3 KarmaToken economics
+
+* ERC-20–like fungible token via **Fabric Token SDK**; soft-cap supply tied to accumulated karma. Tokens burn when redeemed for paid events or merchandise.
+
+### 6.4 Smart wallet
+
+* React-Native / Flutter mobile wallet + browser extension. Stores:
+
+  * Fabric signing key (ECDSA-P256)
+  * Aries/AnonCreds credentials
+  * Off-ledger IPFS pointers to portfolios
+
+### 6.5 Protocol SDK layout
+
+| Layer          | Consumer SDK                             | Provider SDK                 | Middleware (Protocol Server) |
+| -------------- | ---------------------------------------- | ---------------------------- | ---------------------------- |
+| **Messaging**  | DIDComm v2                               | DIDComm v2                   | DIDComm routing, WebSockets  |
+| **AuthN**      | DID Auth + WebAuthn                      | MTLS + DID                   | OIDC-bridge                  |
+| **Domain API** | `learn.submitTask()`, `wallet.balance()` | `provider.postOpportunity()` | Validation, schema mapping   |
+| **Transport**  | gRPC                                     | gRPC                         | TLS 1.3, HTTP/2              |
+
+### 6.6 Zero-Knowledge Proof recommendations
+
+| Requirement                            | Technique                   | Lib / project                                    |
+| -------------------------------------- | --------------------------- | ------------------------------------------------ |
+| Proof of karma ≥ threshold             | Range proofs (Bulletproofs) | `hyperledger/fabric-private-chaincode` + `gnark` |
+| Anonymous membership in Interest Group | Set-membership zk-SNARK     | `AnonCreds` / `ursa`                             |
+| Selective disclosure of profile fields | BBS+ signatures             | Aries Bifold                                     |
+
+Academic and industry work show ZKP integration with Fabric for healthcare privacy and generic identity use-cases.
+
+<div class="page-break-before"></div>
+
+### 6.7 Domain model (simplified ER-style)
+
+![μLearn_ER_3](μLearn_ER_3.png)
+
+**Why these cardinalities?**
+
+* A **Provider** publishes many tasks; a task belongs to exactly one provider.
+* A **Student** may create many submissions; each submission is for exactly one task.
+* A **Student** may have at most one active application per opportunity; a provider can receive many applications.
+* Each student owns one self‑sovereign wallet holding credentials and tokens.
+
+#### FAQ
+
+1. **Why is **\`\`** one‑to‑one?**  Because one submission represents a single student’s attempt at one specific task. Chain‑code uses this to enforce idempotency and audit.
+2. **Why is **\`\`** one‑to‑one?**  The ecosystem mandates one self‑sovereign wallet per DID. Multiple device keys can live inside the wallet object.
+
+
+### 6.8 Stack recommendation (prod-ready)
+
+| Layer               | Choice                                  | Rationale                                                                             |
+| ------------------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
+| Ledger              | **Hyperledger Fabric v3 + Token SDK**   | Permissioned, mature ops, Java chaincode                                              |
+| Identity / VC       | **Aries “post-2025 fork”** + Indy VDR   | DIDComm, AnonCreds, ZKP ready |
+| Smart contracts     | Java (fabric-contract-java v2)          | Alignment with existing μLearn Java skillset                                          |
+| Middleware          | Spring Boot 3 + gRPC                    | Reactive IO, native Fabric Gateway                                                    |
+| Wallet              | React-Native + Aries Bifold fork        | Mobile-first, cross-platform                                                          |
+| Storage (off-chain) | IPFS Cluster                            | Cheap, tamper-evident artefact storage                                                |
+| Observability       | Prometheus / Grafana; Jaeger tracing    |                                                                                       |
+| CI / CD             | GitHub Actions → Kubernetes (GKE / AKS) | Blue-green deployments of peers & apps                                                |
+
+#### On-ledger vs off-ledger
+
+| Data element                             | Justification                        | Storage                              |
+| ---------------------------------------- | ------------------------------------ | ------------------------------------ |
+| KarmaToken balance, task approval hashes | Require immutability & audit         | **On-ledger**                        |
+| Task artefacts (images, code, PDFs)      | Large & binary                       | IPFS, hash on-chain                  |
+| Discord message IDs, chat logs           | PII & noisy                          | Off-ledger DB (PostgreSQL)           |
+| DID Documents                            | Public keys – need global resolution | DID Method-specific (ledger or HTTP) |
+
+---
+<div class="page-break-before"></div>
+
+## 7 Conclusion & next steps
+
+This blueprint demonstrates that μLearn can evolve into a standards-driven, interoperable learning network while **preserving its community DNA**.
+Immediate pilots:
+
+1. **Fabric test-network** with *TaskChaincode* + *KarmaToken*; hook existing Discord bot to invoke chaincode.
+2. **Wallet MVP** issuing learner DIDs and holding demo tokens.
+3. **ZKP range-proof PoC** for “karma ≥ 1000” gate at an invite-only hackathon.
+4. Draft **μLearn DID Method** & register on W3C DID Spec Registries.
+5. Form a **governance consortium** (GTech, universities, hiring partners) — leverage a network-governance playbook.
+
+By staging these steps, μLearn can incrementally migrate critical trust functions to the decentralised layer without disrupting day-to-day learner experience.
+
+---
+
+<div class="page-break-before"></div>
+
+## Annex A — Beckn Alignment & Network Interop (Buyer/Seller/Gateway/Registry)
+
+This section maps μLearn components and flows onto Beckn terminology so integrators from Beckn networks can onboard quickly.
+
+### A.1 Component Mapping
+
+| Beckn concept             | Beckn role                  | μLearn counterpart                                                  | Notes                                                                                |
+| ------------------------- | --------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Buyer App (BAP)**       | Consumer-facing             | **Consumer Node / μLearn Smart Wallet** (Student/Mentor UI + SDK)   | Signs requests with DID; composes VPs/ZKPs.                                          |
+| **Seller App (BPP)**      | Provider backend            | **μLearn Provider Node** (University/Company SDK)                   | Publishes Tasks/Opportunities/Events; verifies proofs; issues VCs.                   |
+| **Beckn Gateway (BG)**    | Discovery/routing           | **μLearn Middleware (Protocol Server)**                             | Validates envelopes; routes to providers; enforces policy; writes anchors to Fabric. |
+| **Network Registry (NR)** | Participant registry & keys | **Aries VC Registry + DID methods (**`did:web`**, **`did:indy`**)** | Keys, schemas, revocation; replaces NR PKI with W3C DID/VC stack.                    |
+| **Settlement**            | Payments                    | **KarmaToken on Hyperledger Fabric**                                | Token mint/burn replaces fiat settlement for many flows.                             |
+
+### A.2 Message Mapping (high level)
+
+| Beckn API                 | μLearn analogue                     | Payload highlights                                        |
+| ------------------------- | ----------------------------------- | --------------------------------------------------------- |
+| `/search` → `on_search`   | Discover Tasks/Opportunities/Events | Filters (skill/category, karma threshold) ↔ catalog items |
+| `/select` → `on_select`   | Choose item                         | Requirements (ZKP needed, rubric, token price)            |
+| `/init` → `on_init`       | Prepare transaction                 | DID challenge, draft submission/ticket                    |
+| `/confirm` → `on_confirm` | Finalise                            | Submission hash + VP (ZK); token mint/burn ack            |
+| `/status` → `on_status`   | Track                               | Moderation state, application state, ticket state         |
+| `/rating` → `on_rating`   | Feedback                            | Mentor rubric; optional Badge VC issuance                 |
+
+### A.3 Sequence — Task discovery & approval (Beckn-style)
+
+![BECKN_A3_SEQ](BECKN_A3_SEQ.png) 
+
+### A.4 Sequence — Event redemption (Karma)
+
+![BECKN_A4_SEQ](BECKN_A4_SEQ.png) 
+
+---
+
+<div class="page-break-before"></div>
+
+## Annex B — Reverse Discovery & Blinded Proof Catalog (No TEE)
+
+This annex replaces “broadcast to wallets” with a **pull + prefilter** design that scales and preserves privacy.
+
+### B.1 Overview
+
+* **Goal:** Let Providers discover qualified candidates **without** learning raw skills/PII or waking all devices.
+* **Approach:** Wallets publish an **epochal, anonymous catalog row** of **blinded tokens and commitments** derived from their credentials; Middleware indexes these; Providers query by predicates; wallets that match and **consent** return fresh ZK proofs.
+
+### B.2 Publish phase (daily/epoch)
+
+1. **Wallet → Middleware (VOPRF round):** For each tag (e.g., `react`), wallet sends a **blinded** value. Middleware applies its secret PRF key and returns a **blinded evaluation** + proof.
+2. **Wallet (local):** Unblinds to get the stable **token** `T = PRFₖ(tag)`.
+3. **Wallet → Middleware:** Posts/updates its **catalog row** containing only tokens/commitments (no PII) + a derived proof that they originate from trusted μLearn VCs.
+
+> **Note:** Middleware never unblinds the wallet’s inputs. The wallet blinds and **unblinds**; the server only evaluates with its secret key.
+
+### B.3 Catalog row (suggested schema)
+
+```json
+{
+  "handle": "anon:inbox:9f...a2",             
+  "epoch": "2025-08-08",
+  "tagTokens": ["oprf:AA9...", "oprf:Q2k..."],
+  "badgeRoot": "merkle:zsha256:...",           
+  "karma": {
+    "commit": "pedersen:...C...",
+    "coarse": { "ge100": true, "ge500": true, "ge1000": true, "ge2000": false }
+  },
+  "attestation": {
+    "type": "DerivedProof",
+    "issuers": ["did:web:mulearn.org", "did:web:partner.edu"],
+    "schemas": [
+      "https://mulearn.org/schemas/badge/v1",
+      "https://mulearn.org/schemas/account-binding/1"
+    ],
+    "proof": "bbs+:... or anoncreds:..."
+  },
+  "revocation": {
+    "statusRefs": ["https://.../statuslists/2025/badges#1234"],
+    "expires": "2025-08-09T00:00:00Z"
+  }
+}
+```
+
+### B.4 Search & contact
+
+1. **Provider → Middleware:** `searchCandidates{ tags=[react,git], karma≥1000 }`
+2. **Middleware:** Compute `PRFₖ(tag)` for each tag; filter rows by `tagTokens` and coarse range flags.
+3. **Middleware → Wallets (by handle):** Invite only matches to respond.
+4. **Wallets (consenting):** Return **fresh VP** with exact ZK proofs + pairwise DID or continue blinded contact.
+
+### B.5 Availability & privacy
+
+* **Mediator inbox (pull):** Wallets poll/long-poll queries; no mass push.
+* **k-anonymity:** Release results only if ≥ *k* matches.
+* **Key rotation:** Rotate PRF key per epoch; wallets republish.
+* **No raw attributes on server:** Only tokens/commitments and verifiable attestations.
+
+---
+
+<div class="page-break-before"></div>
+
+## Annex C — Identity, Auth & Crypto Details
+
+### C.1 Verification pipeline (DID Auth)
+
+1. Resolve DID → get public key (method-specific).
+2. Verify signature over canonical payload (Ed25519 or ES256).
+3. Freshness: `nonce/iat/jti` checks.
+4. **Account binding**: map DID → μLearn account/roles.
+5. (If Fabric update) Require VP linking DID ↔ MSP/X.509 identity.
+
+### C.2 Ed25519 vs ECDSA (layman summary)
+
+* **Ed25519:** modern, fast, deterministic; great for wallets and `did:key`.
+* **ECDSA P‑256 (ES256):** web/enterprise standard; great for `did:web`, TLS/PKI alignment.
+
+### C.3 Verification essentials (engineer notes)
+
+* **Ed25519:** check canonical encodings; compute `h = SHA‑512(R || A || msg) mod L`; check `[S]B = R + [h]A`.
+* **ECDSA P‑256:** parse `(r,s)`; check ranges and **low‑S**; `e=SHA‑256(msg)`; verify `x(X) mod n == r`.
+* Guard against replay, bad points, encoding confusion (DER vs raw 64B for ES256).
+
+---
+
+<div class="page-break-before"></div>
+
+## Annex D — VC Storage, Policy & Issuance Roles
+
+### D.1 Where to store VCs
+
+* **Do not** store full VCs on-chain (privacy, selective disclosure, erasure).
+* Store on-ledger: **issuer allowlists**, **policy**, **revocation/status**, and optional **hash anchors** (salted or Merkle roots) for timestamping.
+
+### D.2 Facts vs Rules
+
+* **VCs carry facts** (who/what/when).
+* **Smart contracts carry rules** (who is trusted, what claims are required) and enforce them under endorsement policy.
+
+### D.3 Issuer roles (who signs)
+
+| Credential                       | Issuer DID                                | Trigger                                    |
+| -------------------------------- | ----------------------------------------- | ------------------------------------------ |
+| Account‑Binding VC               | μLearn Governance (`did:web:mulearn.org`) | Enrollment ceremony success                |
+| Task‑Completion / Micro‑Badge VC | **Provider Node / Mentor org**            | Chaincode emits `SubmissionApproved` event |
+| Offer/Internship VC              | **Provider Node**                         | Selection confirmed                        |
+| Event Ticket VC (optional)       | Event organizer                           | Token burn confirmed                       |
+
+> Chaincode **triggers** issuance (events, anchors) but **never holds issuer private keys**.
+
+### D.4 Issuance flow (sequence)
+
+![Issuance_D4_SEQ](Issuance_D4_SEQ.png) 
+
+### D.5 Policy on-chain (PDP/PEP)
+
+* Maintain **policy JSON/DSL** on Fabric: required schemas, issuer allowlists, ZKP requirements, ledger predicates.
+* Evaluate either **inside chaincode** or via **multi‑org verifier attestations** required by endorsement policy.
+
+---
+
+<div class="page-break-before"></div>
+
+## Annex E — OPRF/VOPRF (Plain English) & Errata
+
+* **PRF** is a **keyed** function `F_k(x)` that lets the key‑holder compute consistent tokens; not just a forward hash.
+* **OPRF:** server applies `F_k` to a **blinded** input it can’t read; wallet unblinds to get `F_k(tag)`.
+* **VOPRF:** adds a proof the server used the correct key.
+* **Errata (clarification):** In the publish phase, the **wallet** blinds and **unblinds**; the middleware only evaluates with its secret key and **never learns raw tags**.
+
+---
+
+*End of annexes.*
