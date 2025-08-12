@@ -69,7 +69,7 @@ Key design levers:
 
 ### Context diagram (C4 Level1)
 
-![μLearn-C4-v3](μLearn-C4-v3.png)
+![μLearn-C4-v3](images/μLearn-C4-v3.png)
 
 The *Protocol Server* enforces the open message envelope, validates signatures, writes state to Fabric, and bridges legacy channels such as Discord.
 
@@ -134,7 +134,7 @@ In most Aries deployments these artefacts live on a **purpose-built Indy (VDR) n
 
 ### Sequence example: *Student applies for an internship*
 
-![Aries-VC-SEQ3](Aries-VC-SEQ3.png)
+![Aries-VC-SEQ3](images/Aries-VC-SEQ3.png)
 
 **Key points**
 
@@ -169,7 +169,7 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 
 **Sequence example – Student submits a task**
 
-![Middleware-SEQ1](Middleware-SEQ1.png)
+![Middleware-SEQ1](images/Middleware-SEQ1.png)
 
 ---
 
@@ -192,7 +192,7 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 
 **Sequence example – Student redeems tokens for event entry**
 
-![SmartWallet-SEQ1](SmartWallet-SEQ1.png)
+![SmartWallet-SEQ1](images/SmartWallet-SEQ1.png)
 
 ---
 
@@ -212,7 +212,7 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 
 **Sequence example – Company publishes internship & accepts applicant**
 
-![ProviderNode-SEQ1](ProviderNode-SEQ1.png)
+![ProviderNode-SEQ1](images/ProviderNode-SEQ1.png)
 
 ---
 
@@ -234,7 +234,7 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 
 **Sequence example – KarmaToken mint**
 
-![Fabric-SEQ1](Fabric-SEQ1.png)
+![Fabric-SEQ1](images/Fabric-SEQ1.png)
 
 ---
 
@@ -254,7 +254,7 @@ They are separate subsystems but together form the **Trust Infrastructure** laye
 
 **Sequence example – Bot announces task approval**
 
-![Discord-BOT-SEQ1](Discord-BOT-SEQ1.png)
+![Discord-BOT-SEQ1](images/Discord-BOT-SEQ1.png)
 
 ---
 <div class="page-break-before"></div>
@@ -337,14 +337,14 @@ A **Decentralized Identifier (DID)** is a globally unique identifier controlled 
 * Wallets (students/mentors) sign DIDComm/gRPC payloads with their DID keys.
 * Middleware resolves the DID Document and verifies signatures, then applies policy (e.g., *mentor can approve task*).
 
-![DID_Auth_SEQ1](DID_Auth_SEQ1.png)
+![DID_Auth_SEQ1](images/DID_Auth_SEQ1.png)
 
 #### 2) Credentials & selective disclosure
 
 * Mentor (Issuer DID) issues a **VC** (e.g., *Completed React Task 42 ≥80%*).
 * Wallet later presents a **ZK proof** (BBS+/AnonCreds) to a Provider Node: *“I hold a Frontend badge”* without exposing identity/score.
 
-![DID_Auth_SEQ12](DID_Auth_SEQ2.png)
+![DID_Auth_SEQ12](images/DID_Auth_SEQ2.png)
 
 #### 3) Binding DIDs to Fabric/MSP identities
 
@@ -409,7 +409,7 @@ DIDs are the **spine of μLearn’s trust fabric**: user‑controlled identifier
 
 ## 5 Use-case catalogue & UML
 
-![μLearn_UC_1](μLearn_UC_1.png)
+![μLearn_UC_1](images/μLearn_UC_1.png)
 
 **Representative scenarios**
 
@@ -471,7 +471,7 @@ Academic and industry work show ZKP integration with Fabric for healthcare priva
 
 ### 6.7 Domain model (simplified ER-style)
 
-![μLearn_ER_3](μLearn_ER_3.png)
+![μLearn_ER_3](images/μLearn_ER_3.png)
 
 **Why these cardinalities?**
 
