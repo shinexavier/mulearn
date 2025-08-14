@@ -1,0 +1,9 @@
+# Secrets (never commit)
+secrets/cluster.secret
+secrets/cluster.env
+secrets/swarm.key
+!secrets/.gitkeep
+
+# Optional/Runtime
+.env
+.peerid

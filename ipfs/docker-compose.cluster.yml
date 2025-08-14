@@ -1,0 +1,66 @@
+services:
+  # ---- Provider A ----
+  ipfs-node-a:
+    image: ipfs/kubo:latest
+    container_name: ipfs-node-a
+    volumes: [ "./secrets/swarm.key:/data/ipfs/swarm.key:ro" ]
+    command: ["daemon","--migrate=true","--enable-gc=false"]
+    ports: ["8080:8080", "4001:4001/tcp","4001:4001/udp"]
+
+  cluster-daemon-a:
+    image: ipfs/ipfs-cluster:latest
+    container_name: cluster-daemon-a
+    depends_on: [ipfs-node-a]
+    links:
+      - ipfs-node-a
+    environment:
+      CLUSTER_SECRET: ${CLUSTER_SECRET}
+      CLUSTER_PEERNAME: providerA
+      CLUSTER_IPFSHTTP_NODEMULTIADDRESS: /dns4/ipfs-node-a/tcp/5001
+      CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS: /ip4/0.0.0.0/tcp/9094
+      CLUSTER_CRDT_TRUSTEDPEERS: "*"
+    ports: ["9094:9094"]
+    command: ["daemon","--upgrade"]
+
+  # ---- Provider B ----
+  ipfs-node-b:
+    image: ipfs/kubo:latest
+    container_name: ipfs-node-b
+    volumes: [ "./secrets/swarm.key:/data/ipfs/swarm.key:ro" ]
+    command: ["daemon","--migrate=true","--enable-gc=false"]
+    ports: ["15001:5001","18080:8080","14001:4001/tcp","14001:4001/udp"]
+
+  cluster-daemon-b:
+    image: ipfs/ipfs-cluster:latest
+    container_name: cluster-daemon-b
+    depends_on: [ipfs-node-b, cluster-daemon-a]
+    links:
+      - ipfs-node-b
+      - cluster-daemon-a
+    environment:
+      CLUSTER_SECRET: ${CLUSTER_SECRET}
+      CLUSTER_PEERNAME: providerB
+      CLUSTER_IPFSHTTP_NODEMULTIADDRESS: /dns4/ipfs-node-b/tcp/5001
+    command: ["daemon","--upgrade","--bootstrap","/dns4/cluster-daemon-a/tcp/9096/p2p/12D3KooWPyKqJVvWduKAdvm3HKmRcDg4XhFHoi7NW9NTKtWRr988"]
+
+  # ---- μLearn Hub ----
+  ipfs-node-hub:
+    image: ipfs/kubo:latest
+    container_name: ipfs-node-hub
+    volumes: [ "./secrets/swarm.key:/data/ipfs/swarm.key:ro" ]
+    command: ["daemon","--migrate=true","--enable-gc=false"]
+    ports: ["25001:5001","28080:8080","24001:4001/tcp","24001:4001/udp"]
+
+  cluster-daemon-hub:
+    image: ipfs/ipfs-cluster:latest
+    container_name: cluster-daemon-hub
+    depends_on: [ipfs-node-hub, cluster-daemon-a]
+    links:
+      - ipfs-node-hub
+      - cluster-daemon-a
+    environment:
+      CLUSTER_SECRET: ${CLUSTER_SECRET}
+      CLUSTER_PEERNAME: mulearnHub
+      CLUSTER_IPFSHTTP_NODEMULTIADDRESS: /dns4/ipfs-node-hub/tcp/5001
+    command: ["daemon","--upgrade","--bootstrap","/dns4/cluster-daemon-a/tcp/9096/p2p/12D3KooWPyKqJVvWduKAdvm3HKmRcDg4XhFHoi7NW9NTKtWRr988"]
+
